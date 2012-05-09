@@ -84,7 +84,7 @@ bool DependencyPaser::_readFileTrain(const char * file)
 	string line;
 	vector<vector<string> > senes;
 	pModel->initFeatureWeight();
-	for(size_t i = 0; i < LEARNTIMES; i++)
+	//for(size_t i = 0; i < LEARNTIMES; i++)
 	{
                 while(getline(fin, line)){
                         if(line == ""){
@@ -113,6 +113,7 @@ bool DependencyPaser::_readFileTrain(const char * file)
                         }
                 }
 	}
+
 
 	return true;
 }

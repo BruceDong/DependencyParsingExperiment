@@ -5,15 +5,15 @@
 
 #define LEARNTIMES	1	/*times of online learning*/
 #define BETA		0.2	/*beta for mutation*/
-#define DETA		0.01	/*quantity changed by mutation*/
+#define DETA		0.001	/*quantity changed by mutation*/
 
 /*Status of Word-agent*/
 #define ACTIVE		1	/*active*/
 #define MATCH		2	/*match*/
 #define MUTATE		3	/*mutate*/
-#define CLONE		4	/*clone*/
-#define MATURE		5	/*mature*/
-#define DIE		6	/*die*/
+#define MATURE		4	/*mature*/
+#define DIE		5	/*die*/
+#define REGULATE        6       /*regulated*/
 
 /*Behavior of Word-agent*/
 #define MOVING		1	/*move*/
@@ -32,7 +32,7 @@
 #define BCELL		1	/*B cell word-agent*/
 
 
-#define MUTATEPRO   	0.1 	/*Mutated probability*/
+#define MUTATEPRO   	0.2 	/*Mutated probability*/
 
 #define PRECISION	1000	/*3 points after 0: 0.000*/
 
@@ -40,7 +40,7 @@
 #define ROWS 20
 #define COLS 20
 
-#define AGQUANTITY	10	/*quantity of antigens*/
+#define AGQUANTITY	5	/*quantity of antigens*/
 #define MAXNUMAGENT     1000    /*local maximum number of agents*/
 
 #endif

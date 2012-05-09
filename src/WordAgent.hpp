@@ -12,6 +12,7 @@ class Environment;
 
 class WordAgent{
 private:
+        int AgentID;
 	int ID;
 	std::pair<int, int> position;
 	std::map<int, double> domFeature;
@@ -32,10 +33,12 @@ private:
 	int concentration;
 	std::pair<int, double> feedback;
 	bool isInteractedWithAntigen;
+	int AGID;
 public:
 	WordAgent(int id,
 			Environment * environment,
 			const std::pair<int, int> & pos, int cat, int con);
+
 	bool run();
 	int getID();
 	bool addDomFeature(const std::vector<int> & feature);
@@ -63,6 +66,12 @@ public:
 
 	int getConcentration();
 	void updateConcentration();
+
+	int getAGID();
+	bool setAGID(int id);
+
+	bool setAgentID(const int id);
+	int getAgentID();
 
 private:
 	bool _doMove();

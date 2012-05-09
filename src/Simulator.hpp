@@ -11,7 +11,7 @@ private:
 	Environment * env;
 public:
 	Simulator(Environment * environment);
-	bool addPWordAgent(WordAgent * pWordAgent);
+	bool addPWordAgent(WordAgent & pWordAgent);
 	bool run(const Sentence & sen, const std::vector<int> & fa);
 private:
         bool resetInteratObjects();

@@ -9,13 +9,17 @@
 
 using namespace std;
 
-Environment::Environment(int r, int c, Evaluation * evaluation)
+Environment::Environment(int r, int c, Evaluation * evaluation, Model *model)
 		: rows(r), cols(c)
 {
 	resetAgents();
 	eva = evaluation;
+	mod = model;
 	pAntigenNum = 0;
+	pBcellNum = 0;
+	agentId = 0;
 	_initGrid();
+
 	badrow.clear();
 	badcol.clear();
 }
@@ -25,35 +29,43 @@ int Environment::_calcSub(const pair<int, int> & pos) const
 	return pos.first * cols + pos.second;
 }
 
-bool Environment::addPWordAgent(WordAgent * pWordAgent)
+bool Environment::addPWordAgent(WordAgent & pWordAgent)
 {
-        if(pWordAgent->getCategory() == ANTIGEN)
+        agentId++;
+        pWordAgent.setAgentID(agentId);
+        if(pWordAgent.getCategory() == ANTIGEN)
         {
                 pAntigenNum++;
-                //cout<<pWordAgent->getPosition().first<<","<<pWordAgent->getPosition().second<<" ";
         }
-        //cout<<pWordAgent->getPosition().first<<","<<pWordAgent->getPosition().second<<" ";
+        else
+        {
+                pBcellNum++;
+        }
 
-        pWordAgents[_calcSub(pWordAgent->getPosition())].insert(pWordAgent);
+        pWordAgents[_calcSub(pWordAgent.getPosition())].insert(map<int,WordAgent>::value_type(agentId,pWordAgent));
+
 	return true;
 }
 
-bool Environment::delPWordAgent(WordAgent * pWordAgent)
+bool Environment::delPWordAgent(WordAgent & pWordAgent)
 {
-        if(pWordAgent->getStatus() == ANTIGEN)
+        if(pWordAgent.getCategory() == ANTIGEN)
         {
                 pAntigenNum--;
-                //cout<<_calcSub(pWordAgent->getPosition())<<" ";
         }
-        //
-	pWordAgents[_calcSub(pWordAgent->getPosition())].erase(pWordAgent);
+        else
+        {
+                pBcellNum--;
+        }
+
+	pWordAgents[_calcSub(pWordAgent.getPosition())].erase(pWordAgent.getAgentID());
 	return true;
 }
 
 bool Environment::resetAgents()
 {
 	pWordAgents.clear();
-	pWordAgents.resize(rows * cols, set<WordAgent *>());
+	pWordAgents.resize(rows * cols, map<int,WordAgent>());
 	return true;
 }
 
@@ -62,15 +74,16 @@ int Environment::agentCount(const pair<int, int> & pos)
 	return pWordAgents[_calcSub(pos)].size();
 }
 
-bool Environment::getNearbyAgents(const WordAgent * pWordAgent,
-		vector<WordAgent *> & neabyAgents) const
+bool Environment::getNearbyAgents(const int id, const pair<int,int> & pos,
+		vector<WordAgent> & neabyAgents) const
 {
 	neabyAgents.clear();
-	const set<WordAgent *> & near = pWordAgents[_calcSub(pWordAgent->getPosition())];
-	for(set<WordAgent *>::iterator it = near.begin();
-			it != near.end(); it++){
-		if(*it != pWordAgent){
-			neabyAgents.push_back(*it);
+	const map<int,WordAgent> & near = pWordAgents[_calcSub(pos)];
+	std::map<int,WordAgent>::const_iterator it = near.begin();
+	for(; it != near.end(); it++){
+		if((*it).first != id){
+
+			neabyAgents.push_back((*it).second);
 		}
 	}
 	return true;
@@ -100,9 +113,13 @@ bool Environment::update(WordAgent * pWordAgent)
 {
 	if(eva->calFeedback(sen,pWordAgent,fa).first < 0)
     	{
-		pWordAgent->setStatus(DIE);
+		//pWordAgent->setStatus(DIE);
 		return false;
 	}
+
+	cout<<"positive feedback...."<<endl;
+	int a;
+	cin>>a;
 
 	return true;
 }
@@ -112,7 +129,7 @@ std::pair<int, double> Environment::gainFeedback(WordAgent * pWordAgent)
 		return eva->calFeedback(sen,pWordAgent,fa);
 }
 
-std::vector<std::set<WordAgent *> > Environment::getAgents()
+std::vector<std::map<int, WordAgent> > Environment::getAgents()
 {
 	return pWordAgents;
 }
@@ -126,6 +143,11 @@ void Environment::gainSentenceInfor(const Sentence & sentence, const std::vector
 int Environment::getAntigenNum()
 {
         return pAntigenNum;
+}
+
+int Environment::getBcellNum()
+{
+        return pBcellNum;
 }
 
 void Environment::_initGrid()
@@ -169,3 +191,49 @@ void Environment::testSub(int a)
         }
         cout<<endl;
 }
+
+void Environment::setAntigenNum()
+{
+        if(pAntigenNum > 0)
+        {
+                this->pAntigenNum--;
+        }
+}
+
+void Environment::setSentence(const Sentence & sentence)
+{
+        sen = sentence;
+}
+
+void Environment::setFather(const vector<int> & father)
+{
+        fa = father;
+}
+
+std::vector<double> Environment::getFeatureWeights()
+{
+        return mod->getFeatureWeight();
+}
+
+bool Environment::updateFeatureWeights(std::map<int, double> & fweight)
+{
+        mod->updateFeatureWeight(fweight);
+        return true;
+}
+
+bool Environment::cloneAgents(WordAgent * pWordAgent)
+{
+        //pCloneAgents.push_back(*pWordAgent);
+
+        return true;
+}
+
+bool Environment::addCloneAgents(int cloneNumber)
+{
+
+        return true;
+}
+
+
+
+

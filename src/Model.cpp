@@ -63,6 +63,10 @@ bool Model::getFeatures(const Sentence & sen,vector<vector<string> > &sens, vect
 void Model::initFeatureWeight()
 {
 	fWeight.resize((int)fMap.size());
+	for(size_t i = 0; i < fWeight.size(); i++)
+	{
+	        fWeight[i] = 0.0;
+        }
 }
 
 vector<double> Model::getFeatureWeight()
@@ -84,6 +88,7 @@ bool Model::updateFeatureWeight(map<int, double> & domFeatures)
 		if(it->first < (int)fWeight.size())
 		{
 			fWeight[it->first] = it->second;
+			//cout<<it->second<<endl;
 		}
 	}
 	return true;
