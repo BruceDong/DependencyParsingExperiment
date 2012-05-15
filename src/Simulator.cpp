@@ -9,6 +9,7 @@ using namespace std;
 Simulator::Simulator(Environment * environment)
 {
 	env = environment;
+	times = 1;
 }
 
 bool Simulator::addPWordAgent(WordAgent & pWordAgent)
@@ -20,7 +21,8 @@ bool Simulator::addPWordAgent(WordAgent & pWordAgent)
 
 bool Simulator::run(const Sentence & sen, const std::vector<int> & fa)
 {
-        cout<<"running..."<<endl;
+        cout<<"Learning from the "<<times++<<" 'th sentence..."<<endl;
+
         /*reset interating objects*/
 	bool hasRun = true;
 	int c;
@@ -30,8 +32,9 @@ bool Simulator::run(const Sentence & sen, const std::vector<int> & fa)
                 cout<<agents[j].size()<<" ";
         }
         cout<<endl;
-        cin>>c;
         */
+        //cin>>c;
+
 
 	/*for(size_t m = 0; m < agents.size(); m++)
 	{
@@ -58,31 +61,43 @@ bool Simulator::run(const Sentence & sen, const std::vector<int> & fa)
         cin>>b;
         */
 
-	/*termination consitions:
+	/*termination conditions:
 	(1) All antigens are killed;
 	(2) All B cells are active;
 	*/
 	//cout<<endl;
+	env->setFeedbackFlag(false);
 	int a;
+	//int round = 0;
 	while(hasRun){
 	        hasRun = false;
 	        //cout<<"ag number is "<<env->getAntigenNum()<<endl;
 	        //cin>>a;
+	        //env->setFeedback(false);
+
                 for(size_t i = 0; i < agents.size(); i++){
 			for(map<int,WordAgent>::iterator it = agents[i].begin(); it != agents[i].end(); it++)
 			{
 			        //cout<<(*it)->getID()<<" "<<(*it)->getCategory()<<" ";
 
 			        it->second.run();
-				if((env->getAntigenNum() != 0)){
+				if(env->getAntigenNum() > (int)(AGSURVIORRATE * env->getAntigenQuantity()))
+				{
+				        //cout<<"ag number is "<<env->getAntigenNum()<<endl;
 					hasRun = true;
 				}
+				else if(!env->getFeedbackFlag())
+				{
+				        hasRun = true;
+                                }
 			}
 		}
+
 		//cin>>a;
 
 		//cout<<"ag number is "<<env->getAntigenNum()<<endl;
 	}
+	cout<<"Learning finished!"<<endl;
 
 	return true;
 }

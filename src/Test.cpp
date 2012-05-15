@@ -72,10 +72,23 @@ void testTrain()
 {
         DependencyPaser dp;
         dp.trainFile("./data/english_train-copy.conll");
+        dp.predictFile("./data/english_test.conll","./result/result.conll");
 }
 
 void testCulSub()
 {
 
 
+}
+
+void testPredict()
+{
+        DependencyPaser dp;
+        dp.predictFile("./data/english_test.conll","./result/result.conll");
+}
+
+void testEvaluation()
+{
+        DependencyPaser dp;
+        dp.evaluate("./result/result.conll","./result/evaluate.conll");
 }

@@ -70,9 +70,9 @@ bool DependencyPaser::_readFileAddBCell(const char * file)
 			senes.push_back(item);
 		}
 	}
-	cout<<"Relicating B cells according to word frequences...";
+	//cout<<"Relicating B cells according to word frequences...";
         pTrainer->cloneBCells();
-        cout<<"Replicate finished!"<<endl;
+        //cout<<"Replicate finished!"<<endl;
 
 	return true;
 }
@@ -80,12 +80,13 @@ bool DependencyPaser::_readFileAddBCell(const char * file)
 bool DependencyPaser::_readFileTrain(const char * file)
 {
 	pTrainer->constructBcellNet();
-	ifstream fin(file);
+
 	string line;
 	vector<vector<string> > senes;
 	pModel->initFeatureWeight();
-	//for(size_t i = 0; i < LEARNTIMES; i++)
+	for(size_t i = 0; i < LEARNTIMES; i++)
 	{
+	        ifstream fin(file);
                 while(getline(fin, line)){
                         if(line == ""){
                                 vector<int> father;
@@ -99,7 +100,7 @@ bool DependencyPaser::_readFileTrain(const char * file)
 
                                 pTrainer->rfTrain(sen, father);
                                 senes.clear();
-                                break;
+                                //break;
                         }
                         else{
                                 vector<string> item;
@@ -109,9 +110,9 @@ bool DependencyPaser::_readFileTrain(const char * file)
                                         item.push_back(tmp);
                                 }
                                 senes.push_back(item);
-
                         }
                 }
+                fin.close();
 	}
 
 
@@ -121,22 +122,36 @@ bool DependencyPaser::trainFile(const char * file)
 {
         cout<<"Initilizing B cell Network...";
 	_readFileAddBCell(file);
-	cout<<"Initilize finished!"<<endl;
-	cout<<"Training...";
+	cout<<"Initilizing finished!"<<endl;
+	cout<<"Online learning...";
 	_readFileTrain(file);
-	cout<<"Train finished!"<<endl;
+	cout<<"Online learning finished!"<<endl;
 
 	return true;
 }
 
 bool DependencyPaser::predictFile(const char * testFile, const char * outFile)
 {
+        cout<<"Predicting...";
+        vector<double> fw =  pModel->getFeatureWeight();
+        /*cout<<"fw size "<<fw.size()<<endl;
+        for(size_t i = 0; i < fw.size();i++)
+        {
+                if(fw[i] != 0.0)
+                {
+                        cout<<"id "<<i<<" "<<fw[i]<<" ";
+                }
+        }
+        int a;
+        cin>>a;
+        */
 	ifstream fin(testFile);
 	ofstream fout(outFile);
 	string line;
 	vector<vector<string> > senes;
 	while(getline(fin, line)){
 		if(line == ""){
+		        cout<<".";
 			vector<int> father;
 			Sentence sen;
 			sen.push_back(make_pair("ROOT", "ORG"));
@@ -151,6 +166,14 @@ bool DependencyPaser::predictFile(const char * testFile, const char * outFile)
 					if(j == 6) fout << "\t" << father[i+1];
 					else fout << "\t" << senes[i][j];
 				}
+				if(father[i+1] == atoi(senes[i][6].c_str()))
+				{
+				        fout<< "\t1";
+                                }
+                                else
+                                {
+                                        fout<< "\t0";
+                                }
 				fout << endl;
 			}
 			fout << endl;
@@ -166,12 +189,48 @@ bool DependencyPaser::predictFile(const char * testFile, const char * outFile)
 			senes.push_back(item);
 		}
 	}
+	cout<<endl<<"Predicting finished!"<<endl;
 	return true;
 }
 
 double DependencyPaser::predict(const Sentence & sen, vector<int> & fa)
 {
 	return pPredictor->predict(sen, fa);
+}
+
+double DependencyPaser::evaluate(const char * outFile, const char * evaluateFile)
+{
+        cout<<"Evaluating..."<<endl;
+        double accuracy = 0.0;
+        int all = 0;
+        int correct = 0;
+        ifstream fin(outFile);
+        ofstream fout(evaluateFile);
+        string line;
+        while(getline(fin,line))
+        {
+                if(line != "")
+                {
+                        vector<string> item;
+			string tmp;
+			istringstream sin(line);
+			while(sin >> tmp){
+				item.push_back(tmp);
+			}
+
+			if(atoi(item[(int)item.size() - 1].c_str()) == 1)
+			{
+			        correct++;
+                        }
+                        all++;
+                }
+        }
+
+        accuracy = (double)correct/(double)all;
+        cout<<"Evaluating finished!"<<endl;
+        cout<<"Accuracy is "<<accuracy<<endl;
+        fout<<"Accuracy is "<<accuracy<<endl;
+        return accuracy;
 }
 
 

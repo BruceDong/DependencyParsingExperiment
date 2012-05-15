@@ -17,6 +17,8 @@ int main(int argc, char * argv[])
 	cout << "predicted OK" << endl;
 */
 	testTrain();
+	//testPredict();
+	testEvaluation();
 
 	return 0;
 }

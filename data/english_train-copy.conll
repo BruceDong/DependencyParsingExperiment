@@ -48,3 +48,30 @@
 48	haag	haag	NNP	NNP	_	46	NP
 49	.	.	.	.	_	43	DEP
 
+1	ms.	ms.	NNP	NNP	_	2	DEP
+2	haag	haag	NNP	NNP	_	3	NP-SBJ
+3	plays	plays	VBZ	VBZ	_	0	ROOT
+4	elianti	elianti	NNP	NNP	_	3	NP-OBJ
+5	.	.	.	.	_	3	DEP
+
+1	rolls-royce	rolls-royce	NNP	NNP	_	4	DEP
+2	motor	motor	NNP	NNP	_	4	DEP
+3	cars	cars	NNPS	NNPS	_	4	DEP
+4	inc.	inc.	NNP	NNP	_	5	NP-SBJ
+5	said	said	VBD	VBD	_	0	ROOT
+6	it	it	PRP	PRP	_	7	NP-SBJ
+7	expects	expects	VBZ	VBZ	_	5	SBAR
+8	its	its	PRP$	PRP$	_	10	DEP
+9	u.s.	u.s.	NNP	NNP	_	10	DEP
+10	sales	sales	NNS	NNS	_	12	NP-SBJ
+11	to	to	TO	TO	_	12	DEP
+12	remain	remain	VB	VB	_	7	S
+13	steady	steady	JJ	JJ	_	12	ADJP
+14	at	at	IN	IN	_	12	PP
+15	about	about	IN	IN	_	17	QP
+16	1,200	1,200	CD	CD	_	15	DEP
+17	cars	cars	NNS	NNS	_	14	NP
+18	in	in	IN	IN	_	12	PP
+19	1990	1990	CD	CD	_	18	NP
+20	.	.	.	.	_	5	DEP
+

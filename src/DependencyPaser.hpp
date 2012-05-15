@@ -23,6 +23,7 @@ public:
 	bool trainFile(const char * file);
 	double predict(const Sentence & sen, std::vector<int> & fa);
 	bool predictFile(const char * testFile, const char * outFile);
+	double evaluate(const char * resultFile, const char * evaluateFile);
 private:
 	bool _readFileAddBCell(const char * file);
 	bool _readFileTrain(const char * file);

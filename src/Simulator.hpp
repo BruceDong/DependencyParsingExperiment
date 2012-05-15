@@ -9,6 +9,7 @@
 class Simulator{
 private:
 	Environment * env;
+	int times;
 public:
 	Simulator(Environment * environment);
 	bool addPWordAgent(WordAgent & pWordAgent);

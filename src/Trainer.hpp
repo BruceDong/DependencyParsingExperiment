@@ -27,7 +27,6 @@ public:
         bool cloneBCells();
         bool cloneAntigens();
 
-
         void testSub();
         void testAgentNum();
 private:

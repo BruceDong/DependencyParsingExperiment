@@ -22,22 +22,24 @@ bool Trainer::rfTrain(const Sentence & sen, const vector<int> & fa)
 {
         pEnv->setSentence(sen);
         pEnv->setFather(fa);
+        pEnv->setFeedback(false);
         int a;
 	/*update weights of receptor(features) by learning from a sample*/
 	/*injecting antigens*/
 	//cout<<"B cell size is "<<pEnv->getBcellNum()<<endl;
 	//cin>>a;
+	pEnv->initAntigenNum();
         _injectAntigen(sen, fa);
         cout<<"AG size is "<<pEnv->getAntigenNum()<<endl;
         //cin>>a;
 
 	if(simu->run(sen,fa))
         {
+                cout<<"killed !";
+                //cin>>a;
+
                 return true;
         }
-        cout<<"killed !";
-
-        cin>>a;
 
 	return false;
 }
@@ -65,7 +67,7 @@ int Trainer::_buildBCell(const string & word)
 		while(flag)
 		{
                         pair<int,int> pos = pEnv->getRandomPosition();
-                        if(pEnv->getLocalAgentsNum(pos) < MAXNUMAGENT)/*local number of agents must be lower than threshold*/
+                        //if(pEnv->getLocalAgentsNum(pos) < MAXNUMAGENT)/*local number of agents must be lower than threshold*/
                         {
                                 pEnv->setLocalAgentsNum(pos);
                                 BCells.push_back(WordAgent(wordID[word], pEnv,pos, BCELL,1));
@@ -85,11 +87,14 @@ int Trainer::_buildBCell(const string & word)
 bool Trainer::constructBcellNet()
 {
         cout<<"Constructing B cell network..."<<endl;
+        cout<<"Number of B cells is "<<BCells.size()<<endl;
 	for(size_t i = 0; i < BCells.size(); i++)
 	{
 	        //cout<<"id is "<<BCells[i].getID()<< " ";
 		pEnv->addPWordAgent(BCells[i]);
+		pEnv->increaseBcellNum();
 	}
+
 	BCells.clear();
 	cout<<"Construct finished!"<<endl;
 	return true;
@@ -121,37 +126,102 @@ bool Trainer::_addAntigen()
 {
         vector<vector<int> > grid =  pEnv->getGrid();
         vector<pair<int,int> > positions;
-        for(size_t i = 0; i < grid.size(); i++)
+        //cout<<"grid is ";
+        /*for(size_t i = 0; i < grid.size(); i++)
         {
                 for(size_t j = 0; j < grid[i].size(); j++)
                 {
-                        if(grid[i][j] != 0)
+                        if(grid[i][j] > 0)
                         {
                                 positions.push_back(make_pair(i,j));
+                                //cout<<" 1 ";
+                                cout<<grid[i][j]<<" ";
+                        }
+                        else
+                        {
+                                cout<<" 0 ";
                         }
                 }
         }
-
+        */
+        for(size_t i = 0; i < ROWS; i++)
+        {
+                for(size_t j = 0; j < COLS; j++)
+                {
+                        positions.push_back(make_pair(i,j));
+                }
+        }
+        cout<<endl;
+        /*cout<<"agents are ";
+        vector<map<int, WordAgent> > wa = pEnv->getAgents();
+        for(size_t j = 0; j < wa.size(); j++)
+        {
+                cout<<wa[j].size()<<" ";
+        }
+        int count = 0;
+        for(size_t j = 0; j < wa.size(); j++)
+        {
+                map<int, WordAgent>::iterator it = wa[j].begin();
+                while(it != wa[j].end())
+                {
+                        if((it->second.getCategory() == ANTIGEN) && (it->second.getStatus() == DIE))
+                        {
+                                count++;
+                        }
+                        it++;
+                }
+        }
+        cout<<"antigen number is "<<count<<endl;
+        cout<<endl;
+        */
+        //cout<<"Antigen is as follow"<<endl;
+        pEnv->initAgID();
         if(Antigens.size() > 0)
         {
+                pEnv->setAntigenQuantity((int)Antigens.size());
                 int ID = -1;
                 int pos = -1;
                 for(size_t p = 0; p < Antigens.size(); p++)
                 {
-                        if(ID != Antigens[p].getID())
+                        pos = p%positions.size();
+                        Antigens[p].setPosition(positions[pos]);
+                        //cout<<Antigens[p].getID()<<" ";
+                        pEnv->addAgID(Antigens[p].getID());
+                        //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
+                        pEnv->addPWordAgent(Antigens[p]);
+                        pEnv->increaseAntigenNum();
+
+
+                        /*if(ID != Antigens[p].getID())
                         {
                                 ID = Antigens[p].getID();
                                 pos = 0;
                         }
+                        */
+                        /*for(size_t q = 0; q < positions.size(); q++)
+                        {
+                                Antigens[p].setPosition(positions[q]);
+                                //cout<<Antigens[p].getID()<<" ";
+                                pEnv->addAgID(Antigens[p].getID());
+                                //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
+                                pEnv->addPWordAgent(Antigens[p]);
+                                pEnv->increaseAntigenNum();
 
-                        int l = pos%(int)positions.size();
+                        }
+                        */
+                        //int l = pos%(int)positions.size();
                         //cout<<"p is "<<p<<endl;
-                        Antigens[p].setPosition(positions[l]);
+                       /* Antigens[p].setPosition(positions[l]);
+                        //cout<<Antigens[p].getID()<<" ";
+                        pEnv->addAgID(Antigens[p].getID());
                         //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
                         pEnv->addPWordAgent(Antigens[p]);
+                        pEnv->increaseAntigenNum();
                         pos++;
+                        */
                 }
         }
+        cout<<endl;
 
         Antigens.clear();
 
@@ -181,7 +251,7 @@ bool Trainer::cloneAntigens()
         int l = (int)Antigens.size() - 1;
         //cout<<"l is "<<l<<endl;
         //cout<<"id "<<Antigens[l].getID()<<endl;
-        for(size_t p = 1; p <  AGQUANTITY; p++)
+        for(size_t p = 1; p < ROWS*COLS; p++)
         {
                 //cout<<"id is "<<Antigens[l].getID()<<endl;
                 WordAgent wa(Antigens[l].getID(), pEnv,Antigens[l].getPosition(), ANTIGEN,1);

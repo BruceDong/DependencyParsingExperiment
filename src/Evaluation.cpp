@@ -26,11 +26,16 @@ double Evaluation::calAccuracy(const vector<int> & newLabel,
 pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa, vector<int> & standard)
 {
         //cout<<"id is "<<wa->getID()<<", ";
+        if(sen.size() == 0)
+        {
+                cout<<"sentence is null"<<endl;
+        }
         int a;
 	vector<double> tmp = pModel->getFeatureWeight();
 	vector<int> father;
 	double value = pPredictor->predict(sen,father);
-
+	pair<int,double> p;
+	
 	/*for(size_t m = 0 ; m < father.size(); m++)
 	{
 	        cout<<father[m]<<" ";
@@ -39,6 +44,14 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 
 	//cout<<standard.size()<<" "<<father.size()<<endl;
 	double accuracy = calAccuracy(father, standard);
+	
+	if(accuracy > 0.8)
+	{
+		p.first = 1;
+		p.second = accuracy;
+		return p;
+
+	}
 	map<int, double> tmpDomFeature = wa->getTmpReceptor();
 	pModel->updateFeatureWeight(tmpDomFeature);
 	vector<double> tmp2 = pModel->getFeatureWeight();
@@ -65,10 +78,10 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 	//cin>>a;
 	int differ = int((mutateaccuracy - accuracy) * PRECISION);
 	pModel->setFeatureWeight(tmp);
-	pair<int, double> p;
-	if((differ == 0) && (accuracy == 1.0))
+	//pair<int, double> p;
+	/*if((differ == 0) && (value == 1.0))
 	{
-		int d = int((mutatevalue - value) * PRECISION);
+		int d = int((mutateaccuracy - accuracy) * PRECISION);
 		if(d > 0)
 		{
 			p.first = 2;
@@ -81,13 +94,27 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 	}
 	else if(differ > 0)
 	{
-		p.first = 1;
-		p.second = mutateaccuracy;
-		cout<<endl<<"id is "<<wa->getID()<<", ";
-		cout<<"mst vs mmst : ("<<value<<" : "<<mutatevalue<<") ; ";
-                cout<<"accuracy vs maccuracy : ("<<accuracy<<" : "<<mutateaccuracy<<") ;"<<endl;
-		return p;
+	        int d = int((mutateaccuracy - accuracy) * PRECISION);
+		if(d > 0)
+		{
+                        p.first = 1;
+                        p.second = mutateaccuracy;
+                        cout<<endl<<"id is "<<wa->getID()<<", ";
+                        cout<<"mst vs mmst : ("<<value<<" : "<<mutatevalue<<") ; ";
+                        cout<<"accuracy vs maccuracy : ("<<accuracy<<" : "<<mutateaccuracy<<") ;"<<endl;
+                        return p;
+		}
 	}
+	*/
+	if(differ > 0)
+	{
+	        p.first = 1;
+                p.second = mutateaccuracy;
+                cout<<endl<<"id is "<<wa->getID()<<", "<<"Ag id is "<<wa->getAGID()<<",";
+                cout<<"mst vs mmst : ("<<value<<" : "<<mutatevalue<<") ; ";
+                cout<<"accuracy vs maccuracy : ("<<accuracy<<" : "<<mutateaccuracy<<") ;"<<endl;
+                return p;
+        }
 
 	p.first = -1;
 	p.second =  0.0;

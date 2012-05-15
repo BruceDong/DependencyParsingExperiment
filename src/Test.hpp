@@ -4,5 +4,7 @@
 void testWordAgentInit();
 void testTrain();
 void testCulSub();
+void testPredict();
+void testEvaluation();
 
 #endif

@@ -14,6 +14,7 @@ class WordAgent{
 private:
         int AgentID;
 	int ID;
+	int AGID;
 	std::pair<int, int> position;
 	std::map<int, double> domFeature;
 	std::map<int, double> tmpFeature;
@@ -33,47 +34,58 @@ private:
 	int concentration;
 	std::pair<int, double> feedback;
 	bool isInteractedWithAntigen;
-	int AGID;
+	Sentence sen;
+	int senID;
+
 public:
 	WordAgent(int id,
 			Environment * environment,
 			const std::pair<int, int> & pos, int cat, int con);
-
+        /*running agent*/
 	bool run();
-	int getID();
-	bool addDomFeature(const std::vector<int> & feature);
-	bool addRecFeature(const std::vector<int> & feature);
 
+	/*operation on id*/
+	int     getID();
+	int     getAGID();
+	bool    setAGID(int id);
+	int     getAgentID();
+	bool    setAgentID(const int id);
+
+	/*adding features*/
+	bool    addDomFeature(const std::vector<int> & feature);
+	bool    addRecFeature(const std::vector<int> & feature);
+
+	/*getting category*/
 	int getCategory();
 
-	int getStatus();
-	void setStatus(int s);
+	/*operation on status*/
+	int     getStatus();
+	void    setStatus(int s);
 
-	void gainSuppression(double suppress);
-
+	/*getting affinity*/
 	double getAgAffinity();
 	double getMutatedAffinity();
+
+	/*operation on position*/
 	std::pair<int, int> getPosition() const;
 	void setPosition(std::pair<int,int> p);
-	std::map<int, double> getDomReceptor();
-	std::map<int, double> getTmpReceptor();
 
+	/*operation on receptor*/
+	std::map<int, double>   getDomReceptor();
+	std::map<int, double>   getTmpReceptor();
+        std::vector<int>        getRecReceptor() const;
 	bool setDomReceptor(std::map<int, double> & rec);
 	bool setRecReceptor(std::vector<int> & rec);
 
-	std::vector<int> getRecReceptor() const;
-	std::pair<int, double> getFeedback() const;
+	/*operation on concentration*/
+	int     getConcentration();
+	void    updateConcentration();
 
-	int getConcentration();
-	void updateConcentration();
-
-	int getAGID();
-	bool setAGID(int id);
-
-	bool setAgentID(const int id);
-	int getAgentID();
-
+	/*operation on sentence*/
+	Sentence getSentence();
+	bool setSentence(const Sentence & sentence, int sentenceID);
 private:
+        /*Behaviors*/
 	bool _doMove();
 	bool _interact();
 	bool _mutate();
@@ -82,25 +94,22 @@ private:
 	bool _regulate();
 	bool _die();
 
-	/*sence*/
+        /*stating concentration*/
+	int     _calConcentration();
+	/*getting information on regulation*/
+	bool    _getRegulation();
+        /*updating self receptors*/
+	bool    _updateSelf();
+	/*calculating feedback*/
+	bool    _calFeedback();
+	/*mapping status to behaviors*/
+	void    _mapStatusToBehavior();
+	/*calculating affinity*/
+	double  _calAffinity(std::vector<int> receptor, int & matchSize);
+	double  _calMutatedAffinity(std::vector<int> receptor);
+	double  _calSuppressByBcell(std::map<int, double> receptor);
+	double  _calStimulusByBcell(std::vector<int> receptor);
 
-	bool _getRegulation();
-
-	int _calConcentration();
-
-
-	void _communicate();
-	bool _updateSelf();
-	bool _calFeedback();
-
-	double _calAffinity(std::vector<int> receptor, int & matchSize);
-	double _calMutatedAffinity(std::vector<int> receptor);
-	double _calSuppressByBcell(std::map<int, double> receptor);
-	double _calStimulusByBcell(std::vector<int> receptor);
-
-	bool _cmpFeedback(std::pair<int, double> sp, std::pair<int, double> dp);
-
-	void _mapStatusToBehavior();
 };
 
 #endif
