@@ -178,15 +178,15 @@ bool WordAgent::_mutate()
 		for(size_t i = 0; i < agFeature.size(); i++)
 		{
 		    /*producting mutated probability*/
-		    int r = rand()%10000;
+		    int r = rand()%1000;
 
-		    mutatedProb = (double)r/10000.0;
+		    mutatedProb = (double)r/1000.0;
 		    //mutatedProb = 0.0;
 
 		    if(mutatedProb < MUTATEPRO)
 		    {
 
-               		 int n = rand()%2;
+               		 /*int n = rand()%2;
                		 if(n == 0)
                		 {
                    		 /*increase*/
@@ -198,12 +198,12 @@ bool WordAgent::_mutate()
 					 mutatePosition.push_back(agFeature[i]);
                        			 flag = true;
                    		 }
-               		 }
+               		 /*}
                		 else
                		 {
                    		 /*decrease*/
                    		 //cout<<"de"<<" ";
-                   		 d = domFeature[agFeature[i]] - DETA;
+                   		 /*d = domFeature[agFeature[i]] - DETA;
                    		 //if(d > 0.0)
                    		 {
                        			 tmpFeature[agFeature[i]] = d;
@@ -211,6 +211,7 @@ bool WordAgent::_mutate()
                        			 flag = true;
                    		 }
                		 }
+               		 */
 
                		 d = 0.0;
 		    }
@@ -411,7 +412,7 @@ bool WordAgent::_clone()
 		}
 		double alpha = 1.0 + agAffinity;
 		int con = _calConcentration();
-		int N = (int)(alpha + stimulus - suppression) * con;
+		int N = (int)(alpha + stimulus - suppression) * con * LAMDA;
 		//cout<<"clone number is "<<N<<endl;
 		//cin>>a;
 
@@ -579,11 +580,12 @@ bool WordAgent::_select()
                                         /*if(_cmpFeedback(feedback,nearAgents[i]->getFeedback()))*/
 					if(mutatedAffinity < nearAgents[i].getMutatedAffinity())
 					{
-						setStatus(ACTIVE);
+						setStatus(MATCH);
 					}
 					else
 					{
-						nearAgents[i].setStatus(ACTIVE);
+						//nearAgents[i].setStatus(ACTIVE);
+						env->setWordAgentStatus(MATCH,position,nearAgents[i].getAgentID());
 					}
 
 				}

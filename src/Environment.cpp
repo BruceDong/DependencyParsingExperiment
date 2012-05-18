@@ -229,10 +229,7 @@ void Environment::testSub(int a)
 
 void Environment::setAntigenNum()
 {
-        if(pAntigenNum > 0)
-        {
-                this->pAntigenNum--;
-        }
+        this->pAntigenNum--;
 }
 
 bool Environment::initAntigenNum()
@@ -372,6 +369,31 @@ bool Environment::setWordAgentSentence(const Sentence & sentence, int sentenceID
         {
                 it->second.setSentence(sentence,sentenceID);
         }
+        return true;
+}
+
+bool Environment::removeAntigen()
+{
+        cout<<"removing antigens that are not killed!"<<endl;
+        for(size_t i = 0; i < pWordAgents.size(); i++)
+        {
+                //cout<<".";
+                map<int,WordAgent>::iterator it = pWordAgents[i].begin();
+                while(it != pWordAgents[i].end())
+                {
+                        if((it->second.getStatus() != DIE) && (it->second.getCategory() == ANTIGEN))
+                        {
+                                it->second.setStatus(DIE);
+                                //cout<<"del "<<it->second.getID()<<" ";
+                                //setAntigenNum();
+                                //delPWordAgent(it->second);
+                        }
+                        it++;
+                }
+        }
+
+
+        cout<<"removing finished!"<<endl;
         return true;
 }
 

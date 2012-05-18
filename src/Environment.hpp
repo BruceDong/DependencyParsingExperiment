@@ -95,6 +95,7 @@ public:
         bool setWordAgentStatus(int status, std::pair<int,int> & position,int agentID);
         bool setAntigenID(int id, std::pair<int,int> & position,int agentID);
         bool setWordAgentSentence(const Sentence & sentence, int sentenceID,std::pair<int,int> & position,int agentID);
+        bool removeAntigen();/*remove antigens that can not be killed at this response*/
 
 private:
 	int _calcSub(const std::pair<int, int> & pos) const;

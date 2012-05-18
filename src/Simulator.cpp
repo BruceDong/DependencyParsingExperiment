@@ -81,16 +81,23 @@ bool Simulator::run(const Sentence & sen, const std::vector<int> & fa)
 			        //cout<<(*it)->getID()<<" "<<(*it)->getCategory()<<" ";
 
 			        it->second.run();
-				if(env->getAntigenNum() > (int)(AGSURVIORRATE * env->getAntigenQuantity()))
+				/*if(env->getAntigenNum() > (int)(AGSURVIORRATE * env->getAntigenQuantity()))
 				{
 				        //cout<<"ag number is "<<env->getAntigenNum()<<endl;
 					hasRun = true;
 				}
 				else if(!env->getFeedbackFlag())
+				*/
+				if(!env->getFeedbackFlag())
 				{
 				        hasRun = true;
                                 }
 			}
+		}
+
+		if(!hasRun)
+		{
+		        env->removeAntigen();
 		}
 
 		//cin>>a;

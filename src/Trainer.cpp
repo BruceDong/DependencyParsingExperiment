@@ -37,6 +37,7 @@ bool Trainer::rfTrain(const Sentence & sen, const vector<int> & fa)
         {
                 cout<<"killed !";
                 //cin>>a;
+                cout<<"ag number is "<<pEnv->getAntigenNum()<<endl;
 
                 return true;
         }
@@ -135,15 +136,16 @@ bool Trainer::_addAntigen()
                         {
                                 positions.push_back(make_pair(i,j));
                                 //cout<<" 1 ";
-                                cout<<grid[i][j]<<" ";
+                                //cout<<grid[i][j]<<" ";
                         }
                         else
                         {
                                 cout<<" 0 ";
                         }
+
                 }
-        }
-        */
+        }*/
+
         for(size_t i = 0; i < ROWS; i++)
         {
                 for(size_t j = 0; j < COLS; j++)
@@ -151,6 +153,7 @@ bool Trainer::_addAntigen()
                         positions.push_back(make_pair(i,j));
                 }
         }
+
         cout<<endl;
         /*cout<<"agents are ";
         vector<map<int, WordAgent> > wa = pEnv->getAgents();
@@ -192,12 +195,13 @@ bool Trainer::_addAntigen()
                         pEnv->increaseAntigenNum();
 
 
+
                         /*if(ID != Antigens[p].getID())
                         {
                                 ID = Antigens[p].getID();
                                 pos = 0;
                         }
-                        */
+
                         /*for(size_t q = 0; q < positions.size(); q++)
                         {
                                 Antigens[p].setPosition(positions[q]);
@@ -209,9 +213,10 @@ bool Trainer::_addAntigen()
 
                         }
                         */
-                        //int l = pos%(int)positions.size();
+
+                        /*int l = pos%(int)positions.size();
                         //cout<<"p is "<<p<<endl;
-                       /* Antigens[p].setPosition(positions[l]);
+                        Antigens[p].setPosition(positions[l]);
                         //cout<<Antigens[p].getID()<<" ";
                         pEnv->addAgID(Antigens[p].getID());
                         //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
@@ -219,6 +224,7 @@ bool Trainer::_addAntigen()
                         pEnv->increaseAntigenNum();
                         pos++;
                         */
+
                 }
         }
         cout<<endl;
@@ -251,7 +257,7 @@ bool Trainer::cloneAntigens()
         int l = (int)Antigens.size() - 1;
         //cout<<"l is "<<l<<endl;
         //cout<<"id "<<Antigens[l].getID()<<endl;
-        for(size_t p = 1; p < ROWS*COLS; p++)
+        for(size_t p = 1; p < ROWS * COLS; p++)
         {
                 //cout<<"id is "<<Antigens[l].getID()<<endl;
                 WordAgent wa(Antigens[l].getID(), pEnv,Antigens[l].getPosition(), ANTIGEN,1);
