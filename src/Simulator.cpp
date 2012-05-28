@@ -26,6 +26,7 @@ bool Simulator::run(const Sentence & sen, const std::vector<int> & fa)
         /*reset interating objects*/
 	bool hasRun = true;
 	int c;
+	//vector<double > fw = env->getFeatureWeights();
 	std::vector<std::map<int, WordAgent> > agents = env->getAgents();
         /*for(size_t  j = 0; j < agents.size(); j++)
         {

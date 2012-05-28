@@ -29,6 +29,9 @@ public:
 
         void testSub();
         void testAgentNum();
+
+        bool initSentenceID();
+        bool saveFeatureWeights();
 private:
 	int _buildBCell(const std::string & word);
 	bool _addAntigenToSimulator(const Sentence & sen, const std::vector<int> & fa);

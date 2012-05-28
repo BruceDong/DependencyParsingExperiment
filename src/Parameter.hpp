@@ -28,8 +28,11 @@
 #define STIMULUS	0.0	/*stimulus threshold*/
 #define SUPPRESS	0.0	/*suppress threshold*/
 
+/*Category of Word-agent*/
 #define ANTIGEN		0	/*Antigen word-agent*/
 #define BCELL		1	/*B cell word-agent*/
+#define MEMORYBCELL     2       /*Memory B cell word-agents*/
+#define ANTIBODY        3       /*Antibody word-agents*/
 
 
 #define MUTATEPRO   	0.2 	/*Mutated probability*/
@@ -37,8 +40,8 @@
 #define PRECISION	1000	/*3 points after 0: 0.000*/
 
 // Enviroment scale
-#define ROWS 5
-#define COLS 5
+#define ROWS 20
+#define COLS 20
 
 #define AGQUANTITY	5	/*quantity of antigens*/
 #define MAXNUMAGENT     1000    /*local maximum number of agents*/
@@ -50,5 +53,7 @@
 #define ACCURACYTHRESHOLD       0.7     /*threshold for mutated accuracy*/
 
 #define LAMDA           5       /*clone number*/
+
+#define AFFINITYMATURE  0.8     /*affinity mature threshold*/
 
 #endif

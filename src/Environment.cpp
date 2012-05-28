@@ -23,6 +23,9 @@ Environment::Environment(int r, int c, Evaluation * evaluation, Model *model)
 
 	badrow.clear();
 	badcol.clear();
+
+	agentNum = 0;
+	isSecondResponse = false;
 }
 
 int Environment::_calcSub(const pair<int, int> & pos) const
@@ -41,6 +44,24 @@ bool Environment::addPWordAgent(WordAgent & pWordAgent)
         }
         else
         {
+                pWordAgents[_calcSub(pWordAgent.getPosition())].insert(map<int,WordAgent>::value_type(pWordAgent.getAgentID(),pWordAgent));
+        }
+	return true;
+}
+
+bool Environment::addPWordAgent(WordAgent & pWordAgent, int category)
+{
+       if(pWordAgent.getAgentID() == 0)
+        {
+                agentId++;
+                //if(pWordAgent.getCategory() == ANTIGEN) cout<<"agent id "<<agentId<<" ";
+                pWordAgent.setAgentID(agentId);
+                pWordAgent.setCategory(category);
+                pWordAgents[_calcSub(pWordAgent.getPosition())].insert(map<int,WordAgent>::value_type(agentId,pWordAgent));
+        }
+        else
+        {
+                pWordAgent.setCategory(category);
                 pWordAgents[_calcSub(pWordAgent.getPosition())].insert(map<int,WordAgent>::value_type(pWordAgent.getAgentID(),pWordAgent));
         }
 	return true;
@@ -343,14 +364,39 @@ int Environment::getSentenceID()
         return senID;
 }
 
+bool Environment::setSentenceID(int id)
+{
+        senID = id;
+        isSecondResponse = true;
+        return true;
+}
+
 bool Environment::setWordAgentStatus(int status, pair<int,int> & position, int agentID)
 {
         map<int,WordAgent>::iterator it = pWordAgents[_calcSub(position)].find(agentID);
         if(it != pWordAgents[_calcSub(position)].end())
         {
+                //cout<<" find id "<<it->second.getAgentID()<<" ";
+                //cout<<" match id "<<agentID<<" ";
                 it->second.setStatus(status);
         }
         return true;
+}
+
+int Environment::getWordAgentStatus(pair<int,int> & position,int agentID)
+{
+        int status = -1;
+        map<int,WordAgent>::iterator it = pWordAgents[_calcSub(position)].find(agentID);
+        if(it != pWordAgents[_calcSub(position)].end())
+        {
+                return it->second.getStatus();
+        }
+        return status;
+}
+
+bool Environment::getSecondResponseFlag()
+{
+        return isSecondResponse;
 }
 
 bool Environment::setAntigenID(int id, std::pair<int,int> & position,int agentID)
@@ -368,6 +414,26 @@ bool Environment::setWordAgentSentence(const Sentence & sentence, int sentenceID
         if(it != pWordAgents[_calcSub(position)].end())
         {
                 it->second.setSentence(sentence,sentenceID);
+        }
+        return true;
+}
+
+bool Environment::setWordAgentAgReceptor(std::vector<int> & rec,std::pair<int,int> & position,int agentID)
+{
+        map<int,WordAgent>::iterator it = pWordAgents[_calcSub(position)].find(agentID);
+        if(it != pWordAgents[_calcSub(position)].end())
+        {
+                it->second.setAgReceptor(rec);
+        }
+        return true;
+}
+
+bool Environment::setWordAgentAffinity(double affinity,std::pair<int,int> & position,int agentID)
+{
+        map<int,WordAgent>::iterator it = pWordAgents[_calcSub(position)].find(agentID);
+        if(it != pWordAgents[_calcSub(position)].end())
+        {
+                it->second.setAffinity(affinity);
         }
         return true;
 }
@@ -397,6 +463,21 @@ bool Environment::removeAntigen()
         return true;
 }
 
+
+bool Environment::updateReceptor()
+{
+        for(size_t i = 0; i < pWordAgents.size(); i++)
+        {
+                map<int, WordAgent>::iterator it = pWordAgents[i].begin();
+                while(it != pWordAgents[i].end())
+                {
+                        it->second.updateSelf();
+                        it++;
+                }
+        }
+
+        return true;
+}
 
 
 

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -311,10 +312,32 @@ bool Trainer::cloneBCells()
 	return true;
 }
 
+bool Trainer::initSentenceID()
+{
+        pEnv->setSentenceID(0);
+        return true;
+}
 
 void Trainer::testSub()
 {
         pEnv->testSub(20);
+}
+
+bool Trainer::saveFeatureWeights()
+{
+        fstream out("./result/fweight",ios::out|ios::app);
+        if(out)
+        {
+                vector<double> fw = pModel->getFeatureWeight();
+                for(size_t i = 0; i < fw.size();i++)
+                {
+                        out<<fw[i]<<"\t";
+                }
+                out<<endl;
+
+        }
+        out.close();
+
 }
 
 

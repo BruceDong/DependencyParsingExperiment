@@ -44,13 +44,12 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 
 	//cout<<standard.size()<<" "<<father.size()<<endl;
 	double accuracy = calAccuracy(father, standard);
-	if(accuracy > 0.8)
+	if(accuracy > AFFINITYMATURE)
 	{
 	        p.first = 1;
                 p.second = accuracy;
 
                 return p;
-
         }
 	map<int, double> tmpDomFeature = wa->getTmpReceptor();
 	pModel->updateFeatureWeight(tmpDomFeature);
@@ -79,7 +78,7 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 	int differ = int((mutateaccuracy - accuracy) * PRECISION);
 	pModel->setFeatureWeight(tmp);
 
-	if((differ == 0) && (value == 1.0))
+	/*if((differ == 0) && (value == 1.0))
 	{
 		int d = int((mutateaccuracy - accuracy) * PRECISION);
 		if(d > 0)
@@ -87,7 +86,7 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 			p.first = 2;
 			p.second = mutatevalue;
 			cout<<endl<<"id is "<<wa->getID()<<"	, ";
-			cout<<"mst vs mmst : ("<<value<<"	: "<<mutatevalue<<"	) ; ";
+			cout<<"mst vs mmst : ("<<value<<"	: "<<mutatevalue<<"	); ";
                         cout<<"accuracy vs maccuracy : ("<<accuracy<<"	: "<<mutateaccuracy<<"	);"<<endl;
 			return p;
 		}
@@ -105,8 +104,9 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
                         return p;
 		}
 	}
+	*/
 
-	/*if(differ > 0)
+	if(differ > 0)
 	{
 	        p.first = 1;
                 p.second = mutateaccuracy;
@@ -115,11 +115,10 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
                 cout<<"accuracy vs maccuracy : ("<<accuracy<<" : "<<mutateaccuracy<<") ;"<<endl;
                 return p;
         }
-        */
+
 
 	p.first = -1;
 	p.second =  0.0;
-
 
 	return p;
 

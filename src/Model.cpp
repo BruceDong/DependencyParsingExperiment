@@ -87,11 +87,14 @@ bool Model::updateFeatureWeight(map<int, double> & domFeatures)
 	map<int, double>::iterator it;
 	for(it = domFeatures.begin(); it != domFeatures.end(); it++)
 	{
-		if((it->first < (int)fWeight.size()) && (it->second != 0.0))
-		{
-			fWeight[it->first] = it->second;
-			//cout<<"id "<<it->first<<" "<<it->second<<" ";
-		}
+
+                fWeight[it->first] = it->second;
+
 	}
 	return true;
+}
+
+std::vector<double> Model::getFeatureWeights()
+{
+        return fWeight;
 }

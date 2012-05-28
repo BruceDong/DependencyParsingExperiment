@@ -99,6 +99,8 @@ bool DependencyPaser::_readFileTrain(const char * file)
                                 }
 
                                 pTrainer->rfTrain(sen, father);
+                                /*save feature weights*/
+
                                 senes.clear();
                                 //break;
                         }
@@ -113,6 +115,7 @@ bool DependencyPaser::_readFileTrain(const char * file)
                         }
                 }
                 fin.close();
+                pTrainer->initSentenceID();
 	}
 
 
@@ -133,7 +136,7 @@ bool DependencyPaser::trainFile(const char * file)
 bool DependencyPaser::predictFile(const char * testFile, const char * outFile)
 {
         cout<<"Predicting...";
-        vector<double> fw =  pModel->getFeatureWeight();
+        //vector<double> fw =  pModel->getFeatureWeight();
         /*cout<<"fw size "<<fw.size()<<endl;
         for(size_t i = 0; i < fw.size();i++)
         {

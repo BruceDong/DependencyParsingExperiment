@@ -24,6 +24,7 @@ public:
 	std::vector<double> getFeatureWeight();
 	bool setFeatureWeight(std::vector<double> & newWeight);
 	bool updateFeatureWeight(std::map<int, double> & newFea);
+	std::vector<double> getFeatureWeights();
 private:
 	int _getFeatureID(const std::string & feat);
 };

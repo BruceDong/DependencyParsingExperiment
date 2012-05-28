@@ -21,6 +21,8 @@ private:
 	std::vector<int> recFeature;
 	std::vector<int> agFeature;
 	std::vector<int> mutatePosition;
+	std::vector<int> memoryFeature;
+	std::vector<int> antibodyFeature;
 	Environment * env;
 	std::queue<int> orders;
 	double domAffinity;
@@ -57,6 +59,7 @@ public:
 
 	/*getting category*/
 	int getCategory();
+	void setCategory(int cat);
 
 	/*operation on status*/
 	int     getStatus();
@@ -64,6 +67,7 @@ public:
 
 	/*getting affinity*/
 	double getAgAffinity();
+	bool setAffinity(double affinity);
 	double getMutatedAffinity();
 
 	/*operation on position*/
@@ -74,8 +78,11 @@ public:
 	std::map<int, double>   getDomReceptor();
 	std::map<int, double>   getTmpReceptor();
         std::vector<int>        getRecReceptor() const;
+        std::vector<int>        getAgReceptor();
 	bool setDomReceptor(std::map<int, double> & rec);
 	bool setRecReceptor(std::vector<int> & rec);
+	bool setAgReceptor(std::vector<int> & rec);
+
 
 	/*operation on concentration*/
 	int     getConcentration();
@@ -84,6 +91,25 @@ public:
 	/*operation on sentence*/
 	Sentence getSentence();
 	bool setSentence(const Sentence & sentence, int sentenceID);
+	int getSentenceID();
+
+	/*operation on memory B cell recepors*/
+	std::vector<int> getMemoryBcellReceptor();
+	bool setMemoryBcellReceptor(std::vector<int> & memRec);
+
+	/*operation on Antibody recepors*/
+	std::vector<int> getAntibodyReceptor();
+	bool setAntibodyReceptor(std::vector<int> & antibodyRec);
+
+
+	/*calculating affinity*/
+	double calAffinity(const std::vector<int> & receptor, std::map<int,double> & domF,int & matchSize);
+
+	bool isSame(std::vector<int> & s, std::vector<int> & d);
+
+        /*updating self receptors*/
+	bool    updateSelf();
+
 private:
         /*Behaviors*/
 	bool _doMove();
@@ -94,21 +120,29 @@ private:
 	bool _regulate();
 	bool _die();
 
+	/*interact*/
+	bool _interactBetweenBcellandAntigen(WordAgent & Bcell, WordAgent & Antigen);
+	bool _interactBetweenMemoryBcellandAntigen(WordAgent & MemoryBcell, WordAgent & Antigen);
+	bool _interactBetweenAntibodyandAntigen(WordAgent & Antibody, WordAgent & Antigen);
+
         /*stating concentration*/
 	int     _calConcentration();
 	/*getting information on regulation*/
 	bool    _getRegulation();
-        /*updating self receptors*/
-	bool    _updateSelf();
+
 	/*calculating feedback*/
 	bool    _calFeedback();
+	bool    _calFeedback(WordAgent & wordAgent);
 	/*mapping status to behaviors*/
 	void    _mapStatusToBehavior();
 	/*calculating affinity*/
-	double  _calAffinity(std::vector<int> receptor, int & matchSize);
+	double  _calAffinity(std::vector<int> & receptor, int & matchSize);
+	double  _calAffinity(std::map<int,double> & domReceptor, int & matchSize);
 	double  _calMutatedAffinity(std::vector<int> receptor);
-	double  _calSuppressByBcell(std::map<int, double> receptor);
+	double  _calSuppressByBcell(std::map<int, double> & receptor);
 	double  _calStimulusByBcell(std::vector<int> receptor);
+
+
 
 };
 
