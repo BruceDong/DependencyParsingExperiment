@@ -31,10 +31,25 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
                 cout<<"sentence is null"<<endl;
         }
         int a;
+        //cout<<"tmp weight";
 	vector<double> tmp = pModel->getFeatureWeight();
+	/*for(size_t i = 0; i < tmp.size(); i++)
+	{
+	        if(tmp[i] > 0.0)
+	        {
+	                cout<<"("<<i<<" "<<tmp[i]<<") ";
+                }
+        }
+        cout<<endl;
+        cout<<"print tmp weight"<<endl;
+        */
 	vector<int> father;
+	//cout<<"predicting"<<endl;
+	//cin>>a;
 	double value = pPredictor->predict(sen,father);
 	pair<int, double> p;
+	//cout<<"predicting finished!"<<endl;
+	//cin>>a;
 
 	/*for(size_t m = 0 ; m < father.size(); m++)
 	{
@@ -106,13 +121,25 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 	}
 	*/
 
+	bool reduceAccuracy = true;
+
 	if(differ > 0)
 	{
 	        p.first = 1;
                 p.second = mutateaccuracy;
+                cout<<"mutated id "<<endl;
+                vector<int> position = wa->getMutatePosition();
+                for(size_t i = 0; i < position.size(); i++)
+                {
+                        cout<< position[i]<<" ";
+                }
+                cout<<endl;
                 cout<<endl<<"id is "<<wa->getID()<<", "<<"Ag id is "<<wa->getAGID()<<",";
                 cout<<"mst vs mmst : ("<<value<<" : "<<mutatevalue<<") ; ";
                 cout<<"accuracy vs maccuracy : ("<<accuracy<<" : "<<mutateaccuracy<<") ;"<<endl;
+                
+
+
                 return p;
         }
 
@@ -122,4 +149,24 @@ pair<int, double>  Evaluation::calFeedback(const Sentence & sen, WordAgent * wa,
 
 	return p;
 
+}
+
+double Evaluation::evalute(Sentence & sen, std::vector<int> & standard)
+{
+        vector<int> father;
+	double value = pPredictor->predict(sen,father);
+	double accuracy = calAccuracy(father, standard);
+	vector<double> fw = pModel->getFeatureWeight();
+	/*for(size_t i = 0; i < fw.size(); i++)
+	{
+	        if(fw[i]>0.0)
+	        {
+	                cout<<"("<<i<<","<<fw[i]<<") ";
+                }
+        }
+
+        cout<<endl;
+        */
+	cout<<" acc is "<<accuracy;
+	return accuracy;
 }

@@ -7,4 +7,6 @@ void testCulSub();
 void testPredict();
 void testEvaluation();
 
+void testParsing();
+
 #endif

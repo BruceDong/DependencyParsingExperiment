@@ -49,14 +49,14 @@ public:
 	bool resetAgents();
 	bool getNearbyAgents(const int id,const std::pair<int,int> & pos,
 		std::vector<WordAgent> & neabyAgents) const;
-	std::vector<std::map<int, WordAgent> > getAgents();
+        std::vector<std::map<int, WordAgent> > getAgents();
 	int agentCount(const std::pair<int, int> & pos);
 	std::pair<int, int> getRandomPosition();
 	bool xInRange(int x);
 	bool yInRange(int y);
 	bool update(WordAgent * pWordAgent);
 	std::map<int, double> getInfor(WordAgent * pWordAgent);
-	std::pair<int, double> gainFeedback(WordAgent * pWordAgent, const Sentence & sentence);
+	std::pair<int, double> gainFeedback(WordAgent * pWordAgent, const Sentence & sentence, const  std::vector<int> & father);
 	void gainSentenceInfor(const Sentence & sentence,const  std::vector<int> & father);
 	int getAntigenNum();
 	void setAntigenNum();
@@ -69,6 +69,7 @@ public:
 	void testSub(int a);
 	void setSentence(const Sentence & sentence);
 	void setFather(const std::vector<int> & father);
+	std::vector<int> getFather();
 
 	std::vector<double> getFeatureWeights();
 

@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "Predictor.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -10,7 +11,7 @@ Predictor::Predictor(Model * pm) : pModel(pm)
 }
 
 bool Predictor::_decode(
-		const double f[maxLen][maxLen][2][2], 
+		const double f[maxLen][maxLen][2][2],
 		int s, int t, int d, int c,
 		const vector<vector<double> > & g,
 		std::vector<int> & father)
@@ -71,9 +72,10 @@ double Predictor::_eisner(
 	return f[0][n-1][1][0];
 }
 
-bool Predictor::_buildGraph(const Sentence & sen, 
+bool Predictor::_buildGraph(const Sentence & sen,
 		vector<vector<double> > & graph)
-{	
+{
+        vFeaID.clear();
 	graph.clear();
 	int n = sen.size();
 	graph.resize(n, vector<double>(n, 0));
@@ -83,6 +85,19 @@ bool Predictor::_buildGraph(const Sentence & sen,
 			graph[i][j] = pModel->wordPairWeight(sen, i, j);
 		}
 	}
+
+	/*vector<int> sid = pModel->getSentenceFeature();
+	sort(sid.begin(),sid.end());
+	for(size_t i = 0; i < sid.size(); i++)
+	{
+	        cout<<sid[i]<<" ";
+        }
+        cout<<endl;
+        pModel->resetSentenceFeature();
+	int a;
+	*/
+	//cin>>a;
+
 	return true;
 }
 

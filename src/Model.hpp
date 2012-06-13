@@ -13,7 +13,9 @@ private:
 	std::vector<double> fWeight;
 	FeatureTemplate ft;
 	int fNumber;
+	std::vector<int> sentenceFeature;
 public:
+        Model();
 	double wordPairWeight(const Sentence & sen, int p, int c);
 	double sumFeatureWeight(const std::vector<std::string> & featVec);
 	bool getFeatureIDVec(const Sentence & sen, int p, int c,
@@ -25,6 +27,8 @@ public:
 	bool setFeatureWeight(std::vector<double> & newWeight);
 	bool updateFeatureWeight(std::map<int, double> & newFea);
 	std::vector<double> getFeatureWeights();
+	std::vector<int> getSentenceFeature();
+	void resetSentenceFeature();
 private:
 	int _getFeatureID(const std::string & feat);
 };

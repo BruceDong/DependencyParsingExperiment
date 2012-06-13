@@ -8,7 +8,13 @@
 #include <set>
 
 #include "Environment.hpp"
-class Environment;
+
+#include "Simulator.hpp"
+
+
+//class Environment;
+class Simulator;
+
 
 class WordAgent{
 private:
@@ -24,6 +30,8 @@ private:
 	std::vector<int> memoryFeature;
 	std::vector<int> antibodyFeature;
 	Environment * env;
+	Simulator * simu;
+
 	std::queue<int> orders;
 	double domAffinity;
 	double recAffinity;
@@ -37,11 +45,15 @@ private:
 	std::pair<int, double> feedback;
 	bool isInteractedWithAntigen;
 	Sentence sen;
+	std::vector<int> father;
 	int senID;
+
+	std::vector<int> localInteractFlag;/*Flags for agent local interaction*/
 
 public:
 	WordAgent(int id,
 			Environment * environment,
+			Simulator * simulator,
 			const std::pair<int, int> & pos, int cat, int con);
         /*running agent*/
 	bool run();
@@ -110,6 +122,25 @@ public:
         /*updating self receptors*/
 	bool    updateSelf();
 
+	/*calculating affinity*/
+	double calAffinity(const std::vector<int> & agReceptor, int &matchSize);
+	double calAffinity(std::map<int,double> & bReceptor, int &matchSize);
+
+	void    mapStatusToBehavior();
+	bool    calFeedback();
+
+	std::vector<int> getMutatePosition();
+
+	void setFather(std::vector<int> & fa);
+	std::vector<int> getFather();
+
+	void printReceptor();
+
+	bool insertLocalAgents(int agentID);
+	bool setLocalAgents(int agentID);
+	bool haveInteracted(int agentID);
+	bool resetLocalAgents();
+
 private:
         /*Behaviors*/
 	bool _doMove();
@@ -119,11 +150,6 @@ private:
 	bool _clone();
 	bool _regulate();
 	bool _die();
-
-	/*interact*/
-	bool _interactBetweenBcellandAntigen(WordAgent & Bcell, WordAgent & Antigen);
-	bool _interactBetweenMemoryBcellandAntigen(WordAgent & MemoryBcell, WordAgent & Antigen);
-	bool _interactBetweenAntibodyandAntigen(WordAgent & Antibody, WordAgent & Antigen);
 
         /*stating concentration*/
 	int     _calConcentration();
@@ -141,6 +167,8 @@ private:
 	double  _calMutatedAffinity(std::vector<int> receptor);
 	double  _calSuppressByBcell(std::map<int, double> & receptor);
 	double  _calStimulusByBcell(std::vector<int> receptor);
+
+
 
 
 

@@ -11,6 +11,7 @@ Trainer::Trainer(Model * pm, Evaluation * eva) : pModel(pm)
 {
 	pEnv = new Environment(ROWS, COLS,eva,pm);
 	simu = new Simulator(pEnv);
+	pEva = eva;
 }
 
 Trainer::~Trainer()
@@ -22,26 +23,77 @@ Trainer::~Trainer()
 bool Trainer::rfTrain(const Sentence & sen, const vector<int> & fa)
 {
         pEnv->setSentence(sen);
+        std::pair<Sentence, vector<int> > p;
+        p.first = sen;
+        p.second = fa;
+        vSen.push_back(p);
+
         pEnv->setFather(fa);
         pEnv->setFeedback(false);
+        /*vector<double> fw = pModel->getFeatureWeight();
+        cout<<"feature weight size is "<<fw.size()<<endl;
+        for(size_t i = 0; i < fw.size();i++)
+        {
+                if(fw[i] != 0.0)
+                {
+                        cout<<"("<<i<<","<<fw[i]<<")"<<" ";
+                }
+        }
+        cout<<endl;
+        */
+
+
+
         int a;
+        //cin>>a;
 	/*update weights of receptor(features) by learning from a sample*/
 	/*injecting antigens*/
 	//cout<<"B cell size is "<<pEnv->getBcellNum()<<endl;
 	//cin>>a;
-	pEnv->initAntigenNum();
+	//pEnv->initAntigenNum();
         _injectAntigen(sen, fa);
-        cout<<"AG size is "<<pEnv->getAntigenNum()<<endl;
+        //cout<<"AG size is "<<pEnv->getAntigenNum()<<endl;
         //cin>>a;
 
+        cout<<"(s, "<<vSen.size()<<")";
 	if(simu->run(sen,fa))
         {
-                cout<<"killed !";
+                //cout<<"killed !";
                 //cin>>a;
-                cout<<"ag number is "<<pEnv->getAntigenNum()<<endl;
+                //cout<<"ag number is "<<pEnv->getAntigenNum()<<endl;
+                /*vector<double> fw = pModel->getFeatureWeight();
+                for(size_t i = 0; i < fw.size();i++)
+                {
+                        if(fw[i] != 0.0)
+                        {
+                                cout<<"("<<i<<","<<fw[i]<<")"<<" ";
+                        }
+                }
+                cout<<endl;
+                Sentence sens = sen;
+                vector<int> f = fa;
+                pEva->evalute(sens,f);
+                */
+                cout<<endl;
+                double sum = 0.0;
+                for(size_t i = 0; i < vSen.size(); i++)
+                {
+                        cout<<"sen id "<<i+1;
+                        Sentence sen = vSen[i].first;
+                        vector<int> s = vSen[i].second;
+                        sum += pEva->evalute(sen,s);
+                        cout<<endl;
+                }
+
+                double average = sum/(double)vSen.size();
+                cout<<"Average accuracy is "<<average<<endl;
 
                 return true;
         }
+
+
+
+
 
 	return false;
 }
@@ -72,7 +124,7 @@ int Trainer::_buildBCell(const string & word)
                         //if(pEnv->getLocalAgentsNum(pos) < MAXNUMAGENT)/*local number of agents must be lower than threshold*/
                         {
                                 pEnv->setLocalAgentsNum(pos);
-                                BCells.push_back(WordAgent(wordID[word], pEnv,pos, BCELL,1));
+                                BCells.push_back(WordAgent(wordID[word], pEnv,simu,pos, BCELL,1));
                                 flag = false;
                         }
 		}
@@ -90,11 +142,14 @@ bool Trainer::constructBcellNet()
 {
         cout<<"Constructing B cell network..."<<endl;
         cout<<"Number of B cells is "<<BCells.size()<<endl;
+
 	for(size_t i = 0; i < BCells.size(); i++)
 	{
 	        //cout<<"id is "<<BCells[i].getID()<< " ";
-		pEnv->addPWordAgent(BCells[i]);
-		pEnv->increaseBcellNum();
+	        //BCells[i].setStatus(ACTIVE);
+	        //BCells[i].setCategory(BCELL);
+		simu->addWordAgent(BCells[i]);
+		//pEnv->increaseBcellNum();
 	}
 
 	BCells.clear();
@@ -104,8 +159,8 @@ bool Trainer::constructBcellNet()
 
 bool Trainer::_buildAntigen(const Sentence & sen,int child,const std::string & word, int parent,const std::string & fword)
 {
-        Antigens.push_back(WordAgent(wordID[word],pEnv,pEnv->getRandomPosition(), ANTIGEN,1));
-        Antigens.push_back(WordAgent(wordID[fword],pEnv,pEnv->getRandomPosition(), ANTIGEN,1));
+        Antigens.push_back(WordAgent(wordID[word],pEnv,simu,pEnv->getRandomPosition(), ANTIGEN,1));
+        Antigens.push_back(WordAgent(wordID[fword],pEnv,simu,pEnv->getRandomPosition(), ANTIGEN,1));
         vector<int> features;
         pModel->getFeatureIDVec(sen, parent, child, features);
         //cout<<"feature size "<<features.size()<<endl;
@@ -155,7 +210,7 @@ bool Trainer::_addAntigen()
                 }
         }
 
-        cout<<endl;
+        //cout<<endl;
         /*cout<<"agents are ";
         vector<map<int, WordAgent> > wa = pEnv->getAgents();
         for(size_t j = 0; j < wa.size(); j++)
@@ -185,50 +240,15 @@ bool Trainer::_addAntigen()
                 pEnv->setAntigenQuantity((int)Antigens.size());
                 int ID = -1;
                 int pos = -1;
+                cout<<"ag size is "<<Antigens.size()<<endl;
                 for(size_t p = 0; p < Antigens.size(); p++)
                 {
                         pos = p%positions.size();
                         Antigens[p].setPosition(positions[pos]);
-                        //cout<<Antigens[p].getID()<<" ";
-                        pEnv->addAgID(Antigens[p].getID());
-                        //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
-                        pEnv->addPWordAgent(Antigens[p]);
-                        pEnv->increaseAntigenNum();
-
-
-
-                        /*if(ID != Antigens[p].getID())
-                        {
-                                ID = Antigens[p].getID();
-                                pos = 0;
-                        }
-
-                        /*for(size_t q = 0; q < positions.size(); q++)
-                        {
-                                Antigens[p].setPosition(positions[q]);
-                                //cout<<Antigens[p].getID()<<" ";
-                                pEnv->addAgID(Antigens[p].getID());
-                                //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
-                                pEnv->addPWordAgent(Antigens[p]);
-                                pEnv->increaseAntigenNum();
-
-                        }
-                        */
-
-                        /*int l = pos%(int)positions.size();
-                        //cout<<"p is "<<p<<endl;
-                        Antigens[p].setPosition(positions[l]);
-                        //cout<<Antigens[p].getID()<<" ";
-                        pEnv->addAgID(Antigens[p].getID());
-                        //cout<<"size is "<<Antigens[p].getRecReceptor().size()<<endl;
-                        pEnv->addPWordAgent(Antigens[p]);
-                        pEnv->increaseAntigenNum();
-                        pos++;
-                        */
-
+                        simu->addWordAgent(Antigens[p]);
                 }
         }
-        cout<<endl;
+        //cout<<endl;
 
         Antigens.clear();
 
@@ -261,7 +281,7 @@ bool Trainer::cloneAntigens()
         for(size_t p = 1; p < ROWS * COLS; p++)
         {
                 //cout<<"id is "<<Antigens[l].getID()<<endl;
-                WordAgent wa(Antigens[l].getID(), pEnv,Antigens[l].getPosition(), ANTIGEN,1);
+                WordAgent wa(Antigens[l].getID(), pEnv,simu,Antigens[l].getPosition(), ANTIGEN,1);
                 vector<int> rec = Antigens[l].getRecReceptor();
                 //cout<<"size of recetor is "<<rec.size()<<endl;
                 wa.setRecReceptor(rec);
@@ -279,7 +299,7 @@ bool Trainer::cloneBCells()
                         if(pEnv->getLocalAgentsNum(BCells[i].getPosition()) < MAXNUMAGENT)
                         {
                                 pEnv->setLocalAgentsNum(BCells[i].getPosition());
-                                WordAgent wa(BCells[i].getID(), pEnv,BCells[i].getPosition(), BCELL,1);
+                                WordAgent wa(BCells[i].getID(), pEnv,simu,BCells[i].getPosition(), BCELL,1);
                                 map<int,double> m = BCells[i].getDomReceptor();
                                 wa.setDomReceptor(m);
                                 vector<int> v = BCells[i].getRecReceptor();
@@ -296,7 +316,7 @@ bool Trainer::cloneBCells()
                                         {
                                                 pEnv->setLocalAgentsNum(pos);
 
-                                                WordAgent wa(BCells[i].getID(), pEnv,pos, BCELL,1);
+                                                WordAgent wa(BCells[i].getID(), pEnv,simu,pos, BCELL,1);
                                                 map<int,double> m = BCells[i].getDomReceptor();
                                                 wa.setDomReceptor(m);
                                                 vector<int> v = BCells[i].getRecReceptor();
@@ -329,6 +349,7 @@ bool Trainer::saveFeatureWeights()
         if(out)
         {
                 vector<double> fw = pModel->getFeatureWeight();
+                feaSet.push_back(fw);
                 for(size_t i = 0; i < fw.size();i++)
                 {
                         out<<fw[i]<<"\t";
@@ -339,5 +360,11 @@ bool Trainer::saveFeatureWeights()
         out.close();
 
 }
+
+void Trainer::initSentences()
+{
+       vSen.clear();
+}
+
 
 

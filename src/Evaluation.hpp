@@ -20,6 +20,7 @@ public:
 	double calAccuracy(const std::vector<int> & newLabel,
 			const std::vector<int> & orgLabel);
 	std::pair<int, double> calFeedback(const Sentence & sen,WordAgent * wa, std::vector<int> & standard);
+	double evalute(Sentence & sen, std::vector<int> & standard);
 };
 
 #endif

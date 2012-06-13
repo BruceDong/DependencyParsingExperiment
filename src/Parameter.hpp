@@ -3,9 +3,9 @@
 
 /*global variables*/
 
-#define LEARNTIMES	1	/*times of online learning*/
+#define LEARNTIMES	30	/*times of online learning*/
 #define BETA		0.2	/*beta for mutation*/
-#define DETA		0.001	/*quantity changed by mutation*/
+#define DETA		0.0000001	/*quantity changed by mutation*/
 
 /*Status of Word-agent*/
 #define ACTIVE		1	/*active*/
@@ -37,11 +37,11 @@
 
 #define MUTATEPRO   	0.2 	/*Mutated probability*/
 
-#define PRECISION	1000	/*3 points after 0: 0.000*/
+#define PRECISION	10000000	/*3 points after 0: 0.000*/
 
 // Enviroment scale
-#define ROWS 20
-#define COLS 20
+#define ROWS 2
+#define COLS 2
 
 #define AGQUANTITY	5	/*quantity of antigens*/
 #define MAXNUMAGENT     1000    /*local maximum number of agents*/
@@ -50,7 +50,7 @@
 
 #define AGSURVIORRATE   0.7     /*rate of survivor of antigens*/
 
-#define ACCURACYTHRESHOLD       0.7     /*threshold for mutated accuracy*/
+#define ACCURACYTHRESHOLD       0.6     /*threshold for mutated accuracy*/
 
 #define LAMDA           5       /*clone number*/
 

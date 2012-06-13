@@ -2,7 +2,10 @@
 #include <iostream>
 using namespace std;
 
-
+Model::Model()
+{
+        sentenceFeature.clear();
+}
 double Model::wordPairWeight(const Sentence & sen, int p, int c)
 {
 	vector<string> featVec;
@@ -17,6 +20,7 @@ bool Model::getFeatureIDVec(const Sentence & sen, int p, int c,
 	ft.abstractFeature(sen, p, c, featVec);
 	featIDVec.clear();
 	for(size_t i = 0; i < featVec.size(); i++){
+	        //cout<<featVec[i]<<" ";
 		featIDVec.push_back(addFeature(featVec[i]));
 	}
 	return true;
@@ -25,11 +29,21 @@ bool Model::getFeatureIDVec(const Sentence & sen, int p, int c,
 double Model::sumFeatureWeight(const vector<string> & featVec)
 {
 	double sum = 0;
+
 	for(size_t i = 0; i < featVec.size(); i++){
 		int fid = _getFeatureID(featVec[i]);
+
 		if(fid == -1) continue;
 		sum += fWeight[fid];
+		/*vector<int>::iterator it = find(sentenceFeature.begin(),sentenceFeature.end(),fid);
+		if(it == sentenceFeature.end())
+		{
+		        sentenceFeature.push_back(fid);
+                }
+                */
+		//cout<<fid<<" ";
 	}
+
 	return sum;
 }
 
@@ -97,4 +111,14 @@ bool Model::updateFeatureWeight(map<int, double> & domFeatures)
 std::vector<double> Model::getFeatureWeights()
 {
         return fWeight;
+}
+
+std::vector<int> Model::getSentenceFeature()
+{
+        return sentenceFeature;
+}
+
+void Model::resetSentenceFeature()
+{
+        sentenceFeature.clear();
 }

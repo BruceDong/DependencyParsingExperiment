@@ -14,9 +14,13 @@ private:
 	std::vector<WordAgent> BCells;
 	std::vector<WordAgent> Antigens;
 	Environment * pEnv;
+	Evaluation * pEva;
 	std::map<std::string, int> wordID;
 	Simulator * simu;
 	std::vector<int> wordFreq;
+	std::vector<std::vector<double> > feaSet;/*set of feature weights*/
+
+	std::vector<std::pair<Sentence,std::vector<int> > >  vSen;
 
 public:
 	Trainer(Model * pm, Evaluation * eva);
@@ -32,6 +36,11 @@ public:
 
         bool initSentenceID();
         bool saveFeatureWeights();
+        bool mergeFeatureWeights();
+
+        void initSentences();
+
+
 private:
 	int _buildBCell(const std::string & word);
 	bool _addAntigenToSimulator(const Sentence & sen, const std::vector<int> & fa);

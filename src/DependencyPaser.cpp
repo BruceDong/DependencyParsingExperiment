@@ -77,16 +77,21 @@ bool DependencyPaser::_readFileAddBCell(const char * file)
 	return true;
 }
 
-bool DependencyPaser::_readFileTrain(const char * file)
+bool DependencyPaser::_readFileTrain(const char * trainFile,const char * testFile, const char * outFile, const char * evaluateFile)
 {
-	pTrainer->constructBcellNet();
-
+        pTrainer->constructBcellNet();
 	string line;
 	vector<vector<string> > senes;
 	pModel->initFeatureWeight();
+	_printEvaluateLine(evaluateFile);
 	for(size_t i = 0; i < LEARNTIMES; i++)
 	{
-	        ifstream fin(file);
+	        cout<<"Learning "<<i+1<<" times"<<endl;
+
+	        ifstream fin(trainFile);
+	        int num = 0;
+	        pTrainer->initSentences();
+	        //pSimu->init();
                 while(getline(fin, line)){
                         if(line == ""){
                                 vector<int> father;
@@ -98,11 +103,15 @@ bool DependencyPaser::_readFileTrain(const char * file)
                                         father.push_back(atoi(senes[i][6].c_str()));
                                 }
 
-                                pTrainer->rfTrain(sen, father);
-                                /*save feature weights*/
 
+                                pTrainer->rfTrain(sen, father);
+
+                                /*save feature weights*/
+                                //pTrainer->saveFeatureWeights();
                                 senes.clear();
-                                //break;
+                                //num++;
+                                //if(num > 10)
+                               // break;
                         }
                         else{
                                 vector<string> item;
@@ -114,9 +123,68 @@ bool DependencyPaser::_readFileTrain(const char * file)
                                 senes.push_back(item);
                         }
                 }
+                //cout<<"number of sentences is "<<num<<endl;
                 fin.close();
                 pTrainer->initSentenceID();
+                predictFile(testFile,outFile);
+                evaluate(outFile,evaluateFile);
+
 	}
+
+        return true;
+}
+
+bool DependencyPaser::_readFileTrain(const char * file)
+{
+	pTrainer->constructBcellNet();
+	string line;
+	vector<vector<string> > senes;
+	pModel->initFeatureWeight();
+	for(size_t i = 0; i < LEARNTIMES; i++)
+	{
+	        cout<<"Learning "<<i+1<<" times"<<endl;
+	        ifstream fin(file);
+	        int num = 0;
+	        pTrainer->initSentences();
+	        //pSimu->init();
+                while(getline(fin, line)){
+                        if(line == ""){
+                                vector<int> father;
+                                Sentence sen;
+                                sen.push_back(make_pair("ROOT", "ORG"));
+                                father.push_back(-1);
+                                for(size_t i = 0; i < senes.size(); i++){
+                                        sen.push_back(make_pair(senes[i][1], senes[i][3]));
+                                        father.push_back(atoi(senes[i][6].c_str()));
+                                }
+
+
+                                pTrainer->rfTrain(sen, father);
+
+                                /*save feature weights*/
+                                //pTrainer->saveFeatureWeights();
+                                senes.clear();
+                                //num++;
+                                //if(num > 10)
+                               // break;
+                        }
+                        else{
+                                vector<string> item;
+                                string tmp;
+                                istringstream sin(line);
+                                while(sin >> tmp){
+                                        item.push_back(tmp);
+                                }
+                                senes.push_back(item);
+                        }
+                }
+                //cout<<"number of sentences is "<<num<<endl;
+                fin.close();
+                pTrainer->initSentenceID();
+
+	}
+
+
 
 
 	return true;
@@ -126,6 +194,8 @@ bool DependencyPaser::trainFile(const char * file)
         cout<<"Initilizing B cell Network...";
 	_readFileAddBCell(file);
 	cout<<"Initilizing finished!"<<endl;
+
+
 	cout<<"Online learning...";
 	_readFileTrain(file);
 	cout<<"Online learning finished!"<<endl;
@@ -149,7 +219,7 @@ bool DependencyPaser::predictFile(const char * testFile, const char * outFile)
         cin>>a;
         */
 	ifstream fin(testFile);
-	ofstream fout(outFile);
+	ofstream fout(outFile, ios_base::trunc);
 	string line;
 	vector<vector<string> > senes;
 	while(getline(fin, line)){
@@ -208,7 +278,7 @@ double DependencyPaser::evaluate(const char * outFile, const char * evaluateFile
         int all = 0;
         int correct = 0;
         ifstream fin(outFile);
-        ofstream fout(evaluateFile);
+        ofstream fout(evaluateFile,ios::app);
         string line;
         while(getline(fin,line))
         {
@@ -234,6 +304,24 @@ double DependencyPaser::evaluate(const char * outFile, const char * evaluateFile
         cout<<"Accuracy is "<<accuracy<<endl;
         fout<<"Accuracy is "<<accuracy<<endl;
         return accuracy;
+}
+
+void DependencyPaser::parsing(const char * trainFile,const char * testFile, const char * outFile, const char * evaluateFile)
+{
+        cout<<"Initilizing B cell Network...";
+        _readFileAddBCell(trainFile);
+        cout<<"Initilizing finished!"<<endl;
+
+        cout<<"Online learning...";
+        _readFileTrain(trainFile,testFile,outFile,evaluateFile);
+        cout<<"Online learning finished!";
+}
+
+void DependencyPaser::_printEvaluateLine(const char * evaluateFile)
+{
+        ofstream fout(evaluateFile,ios::app);
+        fout<<"-------------------------------------------------------"<<endl;
+
 }
 
 

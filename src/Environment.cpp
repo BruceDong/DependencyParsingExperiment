@@ -167,8 +167,9 @@ bool Environment::update(WordAgent * pWordAgent)
 	return true;
 }
 
-std::pair<int, double> Environment::gainFeedback(WordAgent * pWordAgent, const Sentence & sentence)
+std::pair<int, double> Environment::gainFeedback(WordAgent * pWordAgent, const Sentence & sentence, const  std::vector<int> & father)
 {
+                vector<int> fa = father;
 		return eva->calFeedback(sentence,pWordAgent,fa);
 }
 
@@ -268,6 +269,11 @@ void Environment::setSentence(const Sentence & sentence)
 void Environment::setFather(const vector<int> & father)
 {
         fa = father;
+}
+
+std::vector<int> Environment::getFather()
+{
+        return fa;
 }
 
 std::vector<double> Environment::getFeatureWeights()
@@ -472,7 +478,7 @@ bool Environment::updateReceptor()
                 while(it != pWordAgents[i].end())
                 {
                         it->second.updateSelf();
-                        it++;
+
                 }
         }
 

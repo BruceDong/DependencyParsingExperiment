@@ -44,6 +44,10 @@ bool FeatureTemplate::_abstractFeature(vector<string> & featVec)
 	featVec.push_back(_crtPos(p) + "_" + _nextPos(p) + "_" + _crtPos(c) + "_" + _nextPos(c));
 	// p-pos-1,p-pos,c-pos,c-pos+1
 	featVec.push_back(_prePos(p) + "_" + _crtPos(p) + "_" + _crtPos(c) + "_" + _nextPos(c));
+	// p-word,c-pos
+	featVec.push_back(_crtWord(p) + "_" + _crtPos(c));
+	// p-pos,c-word
+	featVec.push_back(_crtPos(p) + "_" + _crtWord(c));
 	return true;
 }
 
